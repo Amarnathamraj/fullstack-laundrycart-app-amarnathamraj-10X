@@ -32,7 +32,7 @@ function CreateOrder({ onClose }) {
     { label: 'Other', address: 'Other,9th road,Indira Nagar,Bangalore', selected: false },
   ]);
 
-  const userId = "user123";
+  //const userId = "user123";
 
   const storeLocations = [
     { location: "Jp Nagar", address: "Near Phone Booth, 10th Road, Bangalore", phone: "9999999999" },
@@ -49,7 +49,7 @@ function CreateOrder({ onClose }) {
   ];
 
   useEffect(() => {
-  fetch('https://laundrycart-full-stack-amarnath10x-1.onrender.com/products')
+  fetch('https://laundry-cart-backednd-reuploaded.onrender.com/products')
   
     // fetch('https://laundrycardbackend-production.up.railway.app/products')
       .then(res => res.json())
@@ -192,6 +192,12 @@ function CreateOrder({ onClose }) {
   };
 
   const handleConfirm = () => {
+    const token = localStorage.getItem("token");  // ✅ Get token from storage
+
+    if (!token) {
+      alert("Login again. Token missing.");
+      return;
+    }
     const orderId = `ORD${Date.now()}`;
     const orderDateTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
     const totalItems = products.reduce((sum, product) => sum + (quantities[product._id] || 0), 0);
@@ -199,7 +205,7 @@ function CreateOrder({ onClose }) {
 
     const orderDetails = {
       orderId,
-      userId,
+      
       orderDateTime,
       storeLocation: storeLocation || 'Jp Nagar',
       city: 'Bangalore',
@@ -218,11 +224,12 @@ function CreateOrder({ onClose }) {
           price: calculatePrice(product._id),
         })),
     };
-fetch('https://laundrycart-full-stack-amarnath10x-1.onrender.com/orders',{
+fetch('https://laundry-cart-backednd-reuploaded.onrender.com/orders',{
    // fetch('https://laundrycardbackend-production.up.railway.app/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': token,  // ✅ now backend will read it correctly
       },
       body: JSON.stringify(orderDetails),
     })

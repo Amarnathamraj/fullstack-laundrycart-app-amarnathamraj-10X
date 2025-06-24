@@ -10,25 +10,24 @@ import OrderComponent from './components/ordercomponent/OrderComponent';
 const App = () => {
   const [token, setToken] = useState(() => localStorage.getItem("token") || "");
 
-
   return (
     <BrowserRouter>
       <div>
         {token ? (
           <Routes>
             <Route path="/" element={<Navigate to="/orders" />} />
-            <Route path="/orders" element={<OrderComponent userId="user123" />} />
-            <Route path="/create-order" element={<CreateOrder />} />
+            <Route path="/orders" element={<OrderComponent token={token} />} />
+            <Route path="/create-order" element={<CreateOrder token={token} />} />
           </Routes>
         ) : (
           <Routes>
-          <Route path="/" element={<Login setToken={setToken} />} />
+            <Route path="/" element={<Login setToken={setToken} />} />
             <Route path="/login" element={<Login setToken={setToken} />} />
-      <Route path="/register" element={<Register />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         )}
       </div>
-   </BrowserRouter>
+    </BrowserRouter>
   );
 };
 

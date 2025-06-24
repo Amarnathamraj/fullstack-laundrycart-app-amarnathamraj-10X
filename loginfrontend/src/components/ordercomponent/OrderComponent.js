@@ -28,14 +28,20 @@ function OrderComponent({ userId }) {
   };
 
   const fetchOrders = () => {
-    if (!userId) {
+    const token = localStorage.getItem('token');
+    if (!token) {
       setError('User ID is missing. Please log in to view orders.');
       return;
     }
 
     setLoading(true);
 
-    fetch(`https://laundrycart-full-stack-amarnath10x-1.onrender.com/orders?userId=${userId}`)
+    fetch(`https://laundry-cart-backednd-reuploaded.onrender.com/orders`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      }
+    })
   //  fetch(`https://laundrycardbackend-production.up.railway.app/orders?userId=${userId}`)
       .then(res => {
         if (!res.ok) {
@@ -173,14 +179,20 @@ function OrderComponent({ userId }) {
   const handleConfirmCancellation = () => {
     if (!selectedOrder || selectedOrder.status !== 'Ready to Pickup') return;
 
-    fetch(`https://laundrycart-full-stack-amarnath10x-1.onrender.com/orders/${selectedOrder.orderId}`, {
+
+   
     //fetch(`https://laundrycardbackend-production.up.railway.app/orders/${selectedOrder.orderId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status: 'Cancelled' }),
-    })
+      const token = localStorage.getItem('token');
+
+      fetch(`https://laundry-cart-backednd-reuploaded.onrender.com/orders/${selectedOrder.orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
+        body: JSON.stringify({ status: 'Cancelled' }),
+      })
+      
       .then(res => {
         console.log(res)
         if (!res.ok) {

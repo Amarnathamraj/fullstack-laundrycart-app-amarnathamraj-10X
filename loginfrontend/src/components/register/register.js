@@ -13,7 +13,7 @@ const Register = () => {
     address: '',
     pincode: '',
     password: '',
-    confirmPassword: '',
+    
   });
 
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Register = () => {
   const handlesubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("https://laundrycart-full-stack-amarnath10x-1.onrender.com/register", {
+      const res = await fetch("https://laundry-cart-backednd-reuploaded.onrender.com/register", {
 
      // const res = await fetch("https://laundrycardbackend-production.up.railway.app/register", {
         method: "POST",
@@ -117,14 +117,14 @@ const Register = () => {
               />
             </div>
 
-            <div className="form-row">
+            {/* <div className="form-row">
               <input
                 type="password"
                 placeholder="Confirm Password"
                 value={user.confirmPassword}
                 onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
               />
-            </div>
+            </div> */}
 
             <div className="checkbox-section">
               <input type="checkbox" required />
