@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
   orderId: { type: String, required: true, unique: true },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'userCollection', required: true }, // ✅ reference
+  userId: { type: String, required: true },
+
+  // user: { type: mongoose.Schema.Types.ObjectId, ref: 'userCollection', required: true }, // ✅ reference
   orderDateTime: { type: String, required: true },
   storeLocation: { type: String, required: true },
   city: { type: String, required: true },

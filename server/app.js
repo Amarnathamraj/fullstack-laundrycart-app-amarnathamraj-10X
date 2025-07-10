@@ -37,23 +37,24 @@ app.use('/', loginRoutes);
 //app.use('/api', ProductRoutes);
 
 // POst  new order
-const authMiddleware = require('./middleware/authMiddleware');
+//const authMiddleware = require('./middleware/authMiddleware');
 
-app.post('/orders', authMiddleware, async (req, res) => {
+app.post('/orders', async (req, res) => {
   try {
     const {
-      orderId, orderDateTime, storeLocation, city, storePhone,
+      orderId,userId, orderDateTime, storeLocation, city, storePhone,
       totalItems, price, customerAddress, items
     } = req.body;
 
-    const requiredFields = [orderId, orderDateTime, storeLocation, city, storePhone, totalItems, price, customerAddress, items];
+    const requiredFields = [orderId,userId, orderDateTime, storeLocation, city, storePhone, totalItems, price, customerAddress, items];
     if (requiredFields.some(field => !field)) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
     const newOrder = new Order({
       orderId,
-      user: req.userId, // ✅ using decoded token user ID
+      userId,
+      // user: req.userId, // ✅ using decoded token user ID
       orderDateTime,
       storeLocation,
       city,
@@ -81,7 +82,7 @@ app.post('/orders', authMiddleware, async (req, res) => {
 // GEting all orders for a specific user
 // 'https://laundrycart-full-stack-amarnath10x-1.onrender.com/orders'
 // https://laundrycardbackend-production.up.railway.app/orders'
-app.get('/orders', authMiddleware, async (req, res) => {
+app.get('/orders', async (req, res) => {
   try {
     const userId = req.userId;
     const orders = await Order.find({ user: userId }).populate('user', 'name email');
