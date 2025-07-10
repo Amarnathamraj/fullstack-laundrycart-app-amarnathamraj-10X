@@ -32,7 +32,7 @@ function CreateOrder({ onClose }) {
     { label: 'Other', address: 'Other,9th road,Indira Nagar,Bangalore', selected: false },
   ]);
 
-  //const userId = "user123";
+  const userId = "user123"; // Reintroduced to prevent undefined error in orderDetails
 
   const storeLocations = [
     { location: "Jp Nagar", address: "Near Phone Booth, 10th Road, Bangalore", phone: "9999999999" },
@@ -49,41 +49,23 @@ function CreateOrder({ onClose }) {
   ];
 
   useEffect(() => {
-  fetch('https://laundry-cart-backednd-reuploaded.onrender.com/products')
-  
-    // fetch('https://laundrycardbackend-production.up.railway.app/products')
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data);
-        const initQuantities = {};
-        const initWashes = {};
-        data.forEach(item => {
-          initQuantities[item._id] = 0;
-          initWashes[item._id] = [];
-        });
-        setQuantities(initQuantities);
-        setWashSelections(initWashes);
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-        const fallbackData = [
-          { _id: '1', name: 'Shirts', description: 'Lorem ipsum is simply dummy text of the', image: shirtImg },
-          { _id: '2', name: 'T Shirts', description: 'Lorem ipsum is simply dummy text of the', image: tshirtImg },
-          { _id: '3', name: 'Trousers', description: 'Lorem ipsum is simply dummy text of ', image: trowsersImg },
-          { _id: '4', name: 'Jeans', description: 'Lorem ipsum is simply dummy text of', image: jeansImg },
-          { _id: '5', name: 'Boxers', description: 'Lorem ipsum is simply dummy text of ', image: boxersImg },
-          { _id: '6', name: 'Joggers', description: 'Lorem ipsum is simply dummy text of ', image: joggersImg },
-        ];
-        setProducts(fallbackData);
-        const initQuantities = {};
-        const initWashes = {};
-        fallbackData.forEach(item => {
-          initQuantities[item._id] = 0;
-          initWashes[item._id] = [];
-        });
-        setQuantities(initQuantities);
-        setWashSelections(initWashes);
-      });
+    const fallbackData = [
+      { _id: '1', name: 'Shirts', description: 'Lorem ipsum is simply dummy text of the', image: shirtImg },
+      { _id: '2', name: 'T Shirts', description: 'Lorem ipsum is simply dummy text of the', image: tshirtImg },
+      { _id: '3', name: 'Trousers', description: 'Lorem ipsum is simply dummy text of ', image: trowsersImg },
+      { _id: '4', name: 'Jeans', description: 'Lorem ipsum is simply dummy text of', image: jeansImg },
+      { _id: '5', name: 'Boxers', description: 'Lorem ipsum is simply dummy text of ', image: boxersImg },
+      { _id: '6', name: 'Joggers', description: 'Lorem ipsum is simply dummy text of ', image: joggersImg },
+    ];
+    setProducts(fallbackData);
+    const initQuantities = {};
+    const initWashes = {};
+    fallbackData.forEach(item => {
+      initQuantities[item._id] = 0;
+      initWashes[item._id] = [];
+    });
+    setQuantities(initQuantities);
+    setWashSelections(initWashes);
   }, []);
 
   const handleQuantityChange = (id, value) => {
@@ -99,7 +81,7 @@ function CreateOrder({ onClose }) {
   };
 
   const calculatePrice = (id) => {
-    const qty = quantities[id];
+    const qty = quantities[id] || 0;
     const washes = washSelections[id] || [];
     const washPrice = washes.reduce((sum, wash) => {
       const option = washOptions.find(w => w.name === wash);
@@ -192,8 +174,7 @@ function CreateOrder({ onClose }) {
   };
 
   const handleConfirm = () => {
-    const token = localStorage.getItem("token");  // ✅ Get token from storage
-
+    const token = localStorage.getItem("token");
     if (!token) {
       alert("Login again. Token missing.");
       return;
@@ -205,65 +186,42 @@ function CreateOrder({ onClose }) {
 
     const orderDetails = {
       orderId,
-      
+      userId,
       orderDateTime,
       storeLocation: storeLocation || 'Jp Nagar',
       city: 'Bangalore',
       storePhone: storePhone || '9999999999',
       storeAddress: storeAddress || 'Near Phone Booth, 10th Road, Bangalore',
-      customerAddress: selectedAddress, // Added to store customer's selected address
+      customerAddress: selectedAddress,
       totalItems,
       price: total,
       status: 'Pending',
       items: products
         .filter(product => quantities[product._id] > 0 && washSelections[product._id]?.length > 0)
         .map(product => ({
-          name: product.name || 'Unknown Product', // Added fallback
+          name: product.name || 'Unknown Product',
           quantity: quantities[product._id],
           washes: washSelections[product._id],
           price: calculatePrice(product._id),
         })),
     };
-fetch('https://laundry-cart-backednd-reuploaded.onrender.com/orders',{
-   // fetch('https://laundrycardbackend-production.up.railway.app/orders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,  // ✅ now backend will read it correctly
-      },
-      body: JSON.stringify(orderDetails),
-    })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        console.log('Order saved successfully:', data);
-        const initQuantities = {};
-        const initWashes = {};
-        products.forEach(item => {
-          initQuantities[item._id] = 0;
-          initWashes[item._id] = [];
-        });
-        setQuantities(initQuantities);
-        setWashSelections(initWashes);
-        setErrorMessage(null);
-      })
-      .catch(error => {
-        console.error('Error submitting order:', error);
-        setErrorMessage('Failed to save order. Please try again.');
-      })
-      .finally(() => {
-        setShowSummary(false);
-        setShowOrderModal(true);
-      });
+
+    console.log('Order details:', orderDetails); // Log instead of API call
+    const initQuantities = {};
+    const initWashes = {};
+    products.forEach(item => {
+      initQuantities[item._id] = 0;
+      initWashes[item._id] = [];
+    });
+    setQuantities(initQuantities);
+    setWashSelections(initWashes);
+    setErrorMessage(null);
+    setShowSummary(false);
+    setShowOrderModal(true);
   };
 
   return (
     <Layout>
-      {/* this is my actual main contnent */}
       <div className="top-section">
         <h2>Create Order</h2>
         <div className="search-bar">
@@ -303,9 +261,6 @@ fetch('https://laundry-cart-backednd-reuploaded.onrender.com/orders',{
                   type="number"
                   min="0"
                   value={quantities[product._id] || 0}
-                // JavaScript looks inside the object for a key matching the string 
-                //in product._id.
-// For example, if product._id === "1", it looks for quantities["1"].
                   onChange={e => handleQuantityChange(product._id, e.target.value)}
                 />
               </td>
@@ -313,7 +268,7 @@ fetch('https://laundry-cart-backednd-reuploaded.onrender.com/orders',{
                 {washOptions.map(opt => (
                   <button
                     key={opt.name}
-      className={washSelections[product._id]?.includes(opt.name) ? 'selected' : ''}
+                    className={washSelections[product._id]?.includes(opt.name) ? 'selected' : ''}
                     onClick={() => toggleWash(product._id, opt.name)}
                   >
                     <span className="wash-icon">{opt.icon}</span>
@@ -322,7 +277,7 @@ fetch('https://laundry-cart-backednd-reuploaded.onrender.com/orders',{
               </td>
               <td>
                 {quantities[product._id] > 0 && washSelections[product._id]?.length > 0
- ? `${quantities[product._id]} x ${washSelections[product._id].length} = ${calculatePrice(product._id)}`
+                  ? `${quantities[product._id]} x ${washSelections[product._id].length} = ${calculatePrice(product._id)}`
                   : '—'}
               </td>
               <td>
@@ -414,7 +369,7 @@ fetch('https://laundry-cart-backednd-reuploaded.onrender.com/orders',{
                           {washSelections[product._id]
                             .map(w => {
                               const option = washOptions.find(opt => opt.name === w);
-                              return option.price;
+                              return option ? option.price : 0;
                             })
                             .reduce((sum, price) => sum + price, 0)}{' '}
                           = <span style={{ color: '#5861AE' }}>{calculatePrice(product._id)}</span>
@@ -499,7 +454,7 @@ fetch('https://laundry-cart-backednd-reuploaded.onrender.com/orders',{
                       >
                         Save
                       </button>
-                          <button
+                      <button
                         onClick={handleCancelNewAddress}
                         style={{
                           padding: '8px 16px',
@@ -514,8 +469,7 @@ fetch('https://laundry-cart-backednd-reuploaded.onrender.com/orders',{
                       </button>
                     </div>
                   ) : (
-                  
-                    <span className="add-new"  onClick={handleAddNewAddress}>
+                    <span className="add-new" onClick={handleAddNewAddress}>
                       ADD NEW
                     </span>
                   )}

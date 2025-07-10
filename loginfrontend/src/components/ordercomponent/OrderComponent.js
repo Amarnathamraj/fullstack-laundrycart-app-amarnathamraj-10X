@@ -57,6 +57,7 @@ function OrderComponent({ userId }) {
         }));
       
         setOrders(updatedOrders);
+        console.log(orders)
        // console.log('Updated orders with new statuses:', updatedOrders);
         setError(null);
       })

@@ -13,14 +13,19 @@ const Register = () => {
     address: '',
     pincode: '',
     password: '',
-    
+    confirmPassword:''
   });
 
   const navigate = useNavigate();
 
   const handlesubmit = async (e) => {
     e.preventDefault();
+    if (user.password !== user.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
     try {
+      const { confirmPassword, ...userDataToSend } = user;
       const res = await fetch("https://laundry-cart-backednd-reuploaded.onrender.com/register", {
 
      // const res = await fetch("https://laundrycardbackend-production.up.railway.app/register", {
@@ -28,7 +33,7 @@ const Register = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(user),
+        body: JSON.stringify(userDataToSend),
       });
       const data = await res.json();
       console.log(data);
@@ -117,14 +122,14 @@ const Register = () => {
               />
             </div>
 
-            {/* <div className="form-row">
+            <div className="form-row">
               <input
                 type="password"
                 placeholder="Confirm Password"
                 value={user.confirmPassword}
                 onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
               />
-            </div> */}
+            </div>
 
             <div className="checkbox-section">
               <input type="checkbox" required />
