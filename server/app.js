@@ -83,14 +83,20 @@ app.post('/orders', async (req, res) => {
 // 'https://laundrycart-full-stack-amarnath10x-1.onrender.com/orders'
 // https://laundrycardbackend-production.up.railway.app/orders'
 app.get('/orders', async (req, res) => {
+  const userId = req.query.userId; // ✅ get userId from query param
+
+  if (!userId) {
+    return res.status(400).json({ message: 'Missing userId in query parameters' });
+  }
+
   try {
-    const userId = req.userId;
-    const orders = await Order.find({ user: userId }).populate('user', 'name email');
+    const orders = await Order.find({ userId }); // ✅ match schema field
     res.json(orders);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching orders', error: err.message });
   }
 });
+
 
 
 
