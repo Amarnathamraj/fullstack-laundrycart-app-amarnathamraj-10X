@@ -19,10 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //app.use('/images', express.static(path.join(__dirname, 'public/images')));
 // MongoDB connection
 // mongoose.connect('mongodb+srv://Amarnath:Amarnath@cluster0.6tnzv4s.mongodb.net/college?retryWrites=true&w=majority&appName=Cluster0')
-mongoose.connect('mongodb+srv://Amarnath:Amraj979123@cluster0.6tnzv4s.mongodb.net/laundry?retryWrites=true&w=majority&appName=Cluster0', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect('mongodb+srv://Amarnath:Amraj979123@cluster0.6tnzv4s.mongodb.net/laundry?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.error('MongoDB connection error:', err));
 
